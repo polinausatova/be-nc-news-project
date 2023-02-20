@@ -8,9 +8,9 @@ Your database will be PSQL, and you will interact with it using [node-postgres](
 
 ## Access to the necessary environment variables
 
-For anyone who wishes to clone this project and run it locally: you will need to create .env files with the environment variables in order to successfully connect to the two databases for development and test data.
+For anyone who wishes to clone this project and run it locally: you will need to create `.env` files with the environment variables in order to successfully connect to the two databases for development and test data.
 
-Please contact me on Slack Polina Usatova for further instructions.
+Please contact me on **Slack Polina Usatova** for further instructions.
 
 ## Dependencies
 
