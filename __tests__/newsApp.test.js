@@ -37,7 +37,7 @@ describe("app", () => {
     });
 
   
-  describe("error handling here", () => {});
+  describe("Some error handling tests will be here like bad enquiry on further methods", () => {});
 
 });
 });
