@@ -1,0 +1,12 @@
+const {fetchTopics } = require('../newsModels/newsModels')
+
+
+exports.getTopics = (req, res) => {
+    console.log ('controllers OK');
+   // console.log (req.url);
+    fetchTopics(req.url)
+    .then ((topics) => {
+        res.status(200).send({topics})
+    })
+
+}

@@ -1,0 +1,20 @@
+
+const db = require("../db/connection.js");
+//const { updateDataReversed } = require("../db/utility.js");
+
+exports.fetchTopics = (url) => {
+    return db.query("SELECT * FROM topics").then((topics) => {
+        console.log('models OK');
+        // console.log(url);
+        // console.log(topics);
+       
+        const formattedTopics = topics.rows.map(({ slug, description }) => {
+            return { 'slug': slug, 'description': description};
+            });
+        return formattedTopics;
+    });
+}
+
+
+
+
