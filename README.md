@@ -6,6 +6,16 @@ We will be building an API for the purpose of accessing application data program
 
 Your database will be PSQL, and you will interact with it using [node-postgres](https://node-postgres.com/).
 
+## Access to the necessary environment variables
+
+For anyone who wishes to clone this project and run it locally: you will need to create .env files with the environment variables in order to successfully connect to the two databases for development and test data.
+
+Please contact me on Slack Polina Usatova for further instructions.
+
+## Dependencies
+
+Please use `npm install` to install all the dependencies.
+
 ## Kanban
 
 ### Link to your Trello Board here: https://trello.com/b/7yiHe1nI
@@ -34,8 +44,7 @@ When pushing the branch to git hub ensure that you make reference to the branch 
 git push origin <branch name>
 ```
 
-From github you can make a pull request and share the link and ticket number via a pull request specific nchelp using the command `nchelp pr`. A tutor will swing by to review your code. Ensure that you keep your trello up to date whilst you await the PR approval. Regular `nchelp` will be available for when you need support.
-
+From github you can make a pull request and share the link and ticket number via a pull request.
 Once a pull request been accepted be sure to switch back to the main branch and pull down the updated changes.
 
 ```
