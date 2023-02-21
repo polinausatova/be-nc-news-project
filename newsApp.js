@@ -7,7 +7,6 @@ const { getTopics} = require('./newsControllers/newsControllers')
 app.get('/api/topics', getTopics);
 
 app.use((req, res, next) => {
-    console.log('Hello');
     res.status(404).send({ msg: 'Path not found. Sorry.'});
 });
 
