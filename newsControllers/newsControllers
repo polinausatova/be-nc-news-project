@@ -1,0 +1,13 @@
+const {fetchTopics} = require('../newsModels/newsModels')
+
+
+exports.getTopics = (req, res, next) => {
+  
+    fetchTopics(req.url)
+    .then ((topics) => {
+        res.status(200).send({ topics })
+    })
+    .catch((err) => {
+        next(err);
+    });
+}

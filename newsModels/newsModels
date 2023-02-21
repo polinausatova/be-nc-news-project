@@ -1,0 +1,13 @@
+
+const db = require("../db/connection.js");
+
+
+exports.fetchTopics = (url) => {
+    return db.query("SELECT * FROM topics").then((topics) => {
+       
+        const formattedTopics = topics.rows.map(({ slug, description }) => {
+            return { 'slug': slug, 'description': description};
+        });
+        return formattedTopics;
+    });
+}
