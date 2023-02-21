@@ -1,5 +1,6 @@
 
 const db = require("../db/connection.js");
+const { commentsCount } = require("../newsUtilities/newsUtilities.js");
 
 
 exports.fetchTopics = (url) => {
@@ -9,5 +10,21 @@ exports.fetchTopics = (url) => {
             return { 'slug': slug, 'description': description};
         });
         return formattedTopics;
+    });
+}
+
+exports.fetchArticles = (url) => {
+
+    return db.query("SELECT * FROM articles").then((articles) => {
+        return db.query("SELECT * FROM comments").then((comments) => {
+           
+            const formattedArticles = articles.rows.map(({ author, title, article_id, topic, created_at, votes, article_img_url }) => {
+            
+                const countedComments = commentsCount(article_id, comments.rows);
+                return { 'author': author, 'title': title, 'article_id': article_id, 'topic': topic, 'created_at': created_at, 'votes': votes, 'article_img_url': article_img_url, 'comment_count': countedComments};
+            });
+            formattedArticles.sort((articleA, articleB) => articleB.created_at - articleA.created_at) ;
+            return formattedArticles;
+        });
     });
 }
