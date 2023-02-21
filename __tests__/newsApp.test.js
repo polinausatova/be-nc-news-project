@@ -5,10 +5,7 @@ const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed");
 
 beforeEach(() => {
-  // console.log('test seeding done');
-  // console.log(data);
   return seed(data);
- 
 });
 
 afterAll(() => {
@@ -20,24 +17,35 @@ describe("app", () => {
   describe("/api/topics", () => {
 
     test("200 GET: responds with an array of all topic objects from corresponding database/table, each of which should have 'slug' and 'description' properties", () => {
-        //Arrange
-    return request(app)
-        //Act
-    .get("/api/topics")
-        //Assert
-    .expect(200)
-    .then(({ body }) => {
-        expect(body).toHaveProperty('topics', expect.any(Array)); 
-        expect(body.topics.length).toBe(data.topicData.length);
+      return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
         
-        for (let i=0; i<body.topics.length; i++) {
-        expect(Object.keys(body.topics[i]).sort()).toEqual(['slug', 'description'].sort()); 
-        }
-    });p
+        expect(body).toHaveProperty('topics', expect.any(Array)); 
+        const {topics} = body;
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
+          expect(topic).toHaveProperty('slug', expect.any(String));
+          expect(topic).toHaveProperty('description', expect.any(String));
+        })
+      
+      });
     });
+  });
 
-  
-  describe("Some error handling tests will be here like bad enquiry on further methods", () => {});
+  describe("Server errors", () => {
+    test("404: responds with message when sent a valid but non-existing path", () => {
+      return request(app)
+      .get('/give-me-some-bananas')
+      .expect(404)
+      .then(({ body }) => {
+        const serverResponseMessage = body.msg;
+        expect(serverResponseMessage).toBe(`Path not found. Sorry.`);
+      });
+    });
+  });
 
 });
-});
+
+

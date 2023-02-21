@@ -1,22 +1,14 @@
 const express = require('express');
 const app = express();
 
-const {
-    handle500Statuses,
-    handlePSQL400s,
-    handleCustomErrors,
-} = require('./newsControllers/errorHandlingControllers');
+const { getTopics} = require('./newsControllers/newsControllers')
 
-app.use(express.json());
-
-const { getTopics } = require('./newsControllers/newsControllers')
-
+//Ticket 3. GET /api/topics
 app.get('/api/topics', getTopics);
 
-
-app.use(handlePSQL400s);
-app.use(handleCustomErrors);
-app.use(handle500Statuses);
-
+app.use((req, res, next) => {
+    console.log('Hello');
+    res.status(404).send({ msg: 'Path not found. Sorry.'});
+});
 
 module.exports = app
