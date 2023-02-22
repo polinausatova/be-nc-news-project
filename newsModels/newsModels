@@ -2,8 +2,8 @@
 const db = require("../db/connection.js");
 
 
-exports.fetchTopics = (url) => {
-    return db.query("SELECT * FROM topics").then((topics) => {
+exports.fetchTopics = () => {
+    return db.query(`SELECT * FROM topics`).then((topics) => {
        
         const formattedTopics = topics.rows.map(({ slug, description }) => {
             return { 'slug': slug, 'description': description};
@@ -11,3 +11,13 @@ exports.fetchTopics = (url) => {
         return formattedTopics;
     });
 }
+
+exports.fetchArticleById = (id) => {
+
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]).then((articles) => {
+        if (articles.rows.length === 0) {
+            return Promise.reject("Article Not Found");
+        }
+        return articles.rows[0];
+    });
+};
