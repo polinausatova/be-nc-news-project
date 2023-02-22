@@ -3,7 +3,7 @@ const {fetchTopics, fetchArticles } = require('../newsModels/newsModels')
 
 exports.getTopics = (req, res, next) => {
   
-    fetchTopics(req.url)
+    fetchTopics()
     .then ((topics) => {
         res.status(200).send({ topics })
     })
@@ -14,7 +14,7 @@ exports.getTopics = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
     
-    fetchArticles(req.url)
+    fetchArticles()
     .then ((articles) => {
         res.status(200).send({ articles })
     })

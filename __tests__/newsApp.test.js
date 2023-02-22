@@ -44,7 +44,7 @@ describe("app", () => {
         //console.log(body.articles);
         expect(body).toHaveProperty('articles', expect.any(Array)); 
         const { articles } = body;
-        expect(body.articles.length).toBe(data.articleData.length);
+        expect(body.articles.length).toBe(12);
 
         articles.forEach((article) => {
           expect(article).toHaveProperty('author', expect.any(String));

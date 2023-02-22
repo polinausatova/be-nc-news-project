@@ -3,7 +3,7 @@ const db = require("../db/connection.js");
 const { commentsCount } = require("../newsUtilities/newsUtilities.js");
 
 
-exports.fetchTopics = (url) => {
+exports.fetchTopics = () => {
     return db.query("SELECT * FROM topics").then((topics) => {
        
         const formattedTopics = topics.rows.map(({ slug, description }) => {
@@ -13,18 +13,14 @@ exports.fetchTopics = (url) => {
     });
 }
 
-exports.fetchArticles = (url) => {
+exports.fetchArticles = () => {
 
-    return db.query("SELECT * FROM articles").then((articles) => {
-        return db.query("SELECT * FROM comments").then((comments) => {
-           
-            const formattedArticles = articles.rows.map(({ author, title, article_id, topic, created_at, votes, article_img_url }) => {
-            
-                const countedComments = commentsCount(article_id, comments.rows);
-                return { 'author': author, 'title': title, 'article_id': article_id, 'topic': topic, 'created_at': created_at, 'votes': votes, 'article_img_url': article_img_url, 'comment_count': countedComments};
-            });
-            formattedArticles.sort((articleA, articleB) => articleB.created_at - articleA.created_at) ;
-            return formattedArticles;
-        });
-    });
+    return db.query(`
+    SELECT articles.*, CAST(COUNT (comments.author) AS INT) AS comment_count
+    FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id
+    GROUP BY articles.article_id
+    ORDER BY articles.created_at DESC;
+    `).then((articles) => {
+    return articles.rows;
+    })
 }
