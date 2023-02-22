@@ -2,12 +2,28 @@
 const db = require("../db/connection.js");
 
 
-exports.fetchTopics = (url) => {
+exports.fetchTopics = () => {
     return db.query("SELECT * FROM topics").then((topics) => {
        
-        const formattedTopics = topics.rows.map(({ slug, description }) => {
-            return { 'slug': slug, 'description': description};
-        });
-        return formattedTopics;
+        // const formattedTopics = topics.rows.map(({ slug, description }) => {
+        //     return { 'slug': slug, 'description': description};
+        // });
+        return topics.rows;
+    });
+}
+
+exports.fetchComments = (article_id) => {
+    return db.query(`
+    SELECT * FROM comments 
+    WHERE comments.article_id = $1 
+    ORDER BY comments.created_at DESC;`, [article_id]).then((comments) => {
+        if (comments.rows.length === 0) {
+            return Promise.reject("No comments found. Either article id does not exist or there are no comments yet.");
+        }
+       
+        // const formattedComments = topics.rows.map(({ slug, description }) => {
+        //     return { 'slug': slug, 'description': description};
+        // }); //As Stephen suggested, remove this when not needed
+        return comments.rows;
     });
 }

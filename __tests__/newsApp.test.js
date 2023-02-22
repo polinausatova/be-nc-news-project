@@ -34,6 +34,64 @@ describe("app", () => {
     });
   });
 
+  describe("/api/articles/:article_id/commens", () => {
+
+    test("200 GET: responds with an array of all comments for the given article_id, each of which should have 'comment_id', 'votes', 'created_at', 'author', 'body', 'article_id'  properties", () => {
+      return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+
+        expect(body).toHaveProperty('comments', expect.any(Array)); 
+
+        const { comments } = body;
+        expect(comments.length).toBe(2);
+
+        comments.forEach((comment) => {
+        expect(comment).toHaveProperty('comment_id', expect.any(Number));
+        expect(comment).toHaveProperty('votes', expect.any(Number));
+        expect(comment).toHaveProperty('created_at', expect.any(String));
+        expect(comment).toHaveProperty('author', expect.any(String));
+        expect(comment).toHaveProperty('body', expect.any(String));
+        expect(comment).toHaveProperty('article_id');
+        expect(comment.article_id).toBe(9);
+        })
+      })
+    });
+    
+    test("200 GET: comments should be served with the most recent comments first", () => {
+
+      return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).not.toBe(undefined); //add to similiar test to avoid false passing!
+        for (let i=0; i<(comments.length-1); i++) {
+          expect(Date.parse(comments[i].created_at) - Date.parse(comments[i+1].created_at) >= 0).toBe(true);
+        }
+      });
+    });
+
+    test("400 GET: responds with incorrect request given invalid article_id", () => {
+      return request(app)
+      .get("/api/articles/Mitch/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Incorrect Request");
+      });
+    });
+
+    test("404 GET: responds with 'Not found' message given valid but non-existent article_id", () => {
+      return request(app)
+      .get('/api/articles/28/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('No comments found. Either article id does not exist or there are no comments yet.');
+      });
+    });
+  });
+
   describe("Server errors", () => {
     test("404: responds with message when sent a valid but non-existing path", () => {
       return request(app)
@@ -41,7 +99,7 @@ describe("app", () => {
       .expect(404)
       .then(({ body }) => {
         const serverResponseMessage = body.msg;
-        expect(serverResponseMessage).toBe(`Path not found. Sorry.`);
+        expect(serverResponseMessage).toBe(`Path Not Found`);
       });
     });
   });
