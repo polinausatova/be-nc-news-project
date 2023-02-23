@@ -1,7 +1,7 @@
 exports.handlePSQL400s = (error, request, response, next) => {
     console.log(error);
     if (error.code == '22P02') {
-        response.status(400).send({ msg: 'Incorrect Request' });
+        response.status(400).send({ msg: 'Incorrect Request' })
     } else {
         next(error);
     }

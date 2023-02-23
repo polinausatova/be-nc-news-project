@@ -94,7 +94,7 @@ describe("app", () => {
       });
     });
 
-    test.only("404 GET: responds with 'Article id does not exist' message given valid but non-existent article_id", () => {
+    test.skip("404 GET: responds with 'Article id does not exist' message given valid but non-existent article_id", () => {
       return request(app)
       .get('/api/articles/28/comments')
       .expect(404)
