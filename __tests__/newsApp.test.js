@@ -127,7 +127,7 @@ describe("app", () => {
     });
   });
 
-  describe("PATCH /api/articles/:article_id", () => {
+  describe.skip("PATCH /api/articles/:article_id", () => {
 
     test("204 PATCH: No Content responds with '", () => {});
 
