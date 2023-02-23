@@ -1,5 +1,5 @@
 exports.handlePSQL400s = (error, request, response, next) => {
-    console.log(error);
+    
     if (error.code == '22P02') {
         response.status(400)
         .send({ msg: 'Incorrect Request' })
@@ -10,7 +10,7 @@ exports.handlePSQL400s = (error, request, response, next) => {
 }
 
 exports.handlePSQL235s = (error, request, response, next) => {
-    console.log(error);
+   
     if (error.code == '23502') {
         response.status(400)
         .send({ msg: 'Invalid input' })
