@@ -42,7 +42,6 @@ describe("app", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        //console.log(body.article);
         expect(body).toHaveProperty('article', expect.any(Object)); 
 
         const { article } = body;
