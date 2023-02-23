@@ -12,7 +12,8 @@ exports.fetchTopics = () => {
 exports.fetchComments = (article_id) => {
     if (typeof article_id*1 === NaN) {
         return next();
-    } else 
+    } 
+    else 
     return db.query(`
     SELECT * FROM comments 
     WHERE comments.article_id = $1 
@@ -25,7 +26,7 @@ exports.fetchComments = (article_id) => {
             `, [article_id]).then((articles) => {
                 if (articles.rows.length === 0) {
                     return Promise.reject("Article id does not exist");
-                } else 
+                }
                 return [];
             })
         } 

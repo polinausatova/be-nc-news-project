@@ -1,5 +1,5 @@
 const {fetchTopics, fetchComments} = require('../newsModels/newsModels')
-//const { handlePSQL400s } = require('../newsControllers/errorHandlingControllers')
+const { handlePSQL400s } = require('../newsControllers/errorHandlingControllers')
 
 
 exports.getTopics = (req, res, next) => {
