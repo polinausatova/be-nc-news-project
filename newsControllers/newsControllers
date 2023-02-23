@@ -1,4 +1,5 @@
 const {fetchTopics, fetchComments} = require('../newsModels/newsModels')
+//const { handlePSQL400s } = require('../newsControllers/errorHandlingControllers')
 
 
 exports.getTopics = (req, res, next) => {
@@ -15,11 +16,11 @@ exports.getTopics = (req, res, next) => {
 exports.getComments = (req, res, next) => {
     const { article_id } = req.params;
     
-    fetchComments(article_id)
-    .then ((comments) => {
-        res.status(200).send({ comments })
-    })
-    .catch((err) => {
-        next(err);
-    });
+        fetchComments(article_id)
+        .then ((comments) => {
+            res.status(200).send({ comments })
+        })
+        .catch((err) => {
+            next(err);
+        });
 }

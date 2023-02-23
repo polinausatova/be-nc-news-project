@@ -13,7 +13,7 @@ app.get('/api/topics', getTopics);
 app.get('/api/articles/:article_id/comments', getComments);
 
 app.use((req, res, next) => {
-    res.status(404).send({ msg: 'Path Not Found'});
+    res.status(404).send({ msg: "Path Not Found"});
 });
 
 app.use(handlePSQL400s);

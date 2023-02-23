@@ -73,7 +73,7 @@ describe("app", () => {
       });
     });
 
-    test("400 GET: responds with incorrect request given invalid article_id", () => {
+    test.only("400 GET: responds with 'Incorrect Request' message given invalid article_id", () => {
       return request(app)
       .get("/api/articles/Mitch/comments")
       .expect(400)
@@ -82,14 +82,24 @@ describe("app", () => {
       });
     });
 
-    test("404 GET: responds with 'Not found' message given valid but non-existent article_id", () => {
+    test("404 GET: responds with 'Article id does not exist' message given valid but non-existent article_id", () => {
       return request(app)
       .get('/api/articles/28/comments')
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('No comments found. Either article id does not exist or there are no comments yet.');
+        expect(body.msg).toBe("Article id does not exist");
       });
     });
+
+    test("404 GET: responds with 'There are no comments for this article yet' message given valid article_id for the article with no comments existing", () => {
+      return request(app)
+      .get('/api/articles/4/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("There are no comments for this article yet");
+      });
+    });
+
   });
 
   describe("Server errors", () => {
@@ -99,7 +109,7 @@ describe("app", () => {
       .expect(404)
       .then(({ body }) => {
         const serverResponseMessage = body.msg;
-        expect(serverResponseMessage).toBe(`Path Not Found`);
+        expect(serverResponseMessage).toBe("Path Not Found");
       });
     });
   });
