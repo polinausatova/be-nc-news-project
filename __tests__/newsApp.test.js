@@ -89,9 +89,9 @@ describe("app", () => {
 
   describe("/api/articles/:article_id/comments", () => {
 
-    test.skip("201 POST: responds with the posted comment (Request body accepts an object with the following properties 'username', 'body')", () => {
+    test("201 POST: responds with the posted comment (Request body accepts an object with the following properties 'username', 'body')", () => {
       const requestBody = {
-        'username': 'Bigga',
+        'username': 'butter_bridge',
         'body': 'Not sure I got the point'
       };
       return request(app)
@@ -100,12 +100,42 @@ describe("app", () => {
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
-        expect(comment).toHaveProperty('comment_id', expect(9));
-        expect(comment).toHaveProperty('body', expect('Not sure I got the point'));
-        expect(comment).toHaveProperty('votes', expect(0));
-        expect(comment).toHaveProperty('author', expect('Bigga'));
-        expect(comment).toHaveProperty('article_id', expect(9));
-        expect(article).toHaveProperty('created_at', expect.any(String));
+        console.log(comment);
+        expect(comment).toEqual({
+          comment_id: 19,
+          body: 'Not sure I got the point',
+          article_id: 9,
+          author: 'butter_bridge',
+          votes: 0,
+          created_at: expect.any(String)
+        });
+      });
+    });
+
+    test.skip("400 POST: responds with an error message if input is not an object", () => {
+      const requestBody = [
+        'Bigga', 'Not sure I got the point'
+      ];
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input datatype');
+      });
+    });
+    
+    test.skip("400 POST: responds with an error message if input does not have any of required properties ('username','body')", () => {
+      const requestBody = {
+        'nickname': 'Bigga',
+        'text': 'Not sure I got the point'
+      };
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing properties('username' and/or 'body')");
       });
     });
   });
