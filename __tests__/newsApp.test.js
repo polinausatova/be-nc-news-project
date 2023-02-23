@@ -112,16 +112,17 @@ describe("app", () => {
       });
     });
 
-    test("400 POST: responds with an error message if input is not an object", () => {
-      const requestBody = [
-        'Bigga', 'Not sure I got the point'
-      ];
+    test("400 POST: responds with an error message given invalid article_id", () => {
+      const requestBody = {
+        'username': 'butter_bridge',
+        'body': 'Not sure I got the point'
+      };
       return request(app)
-      .post("/api/articles/9/comments")
+      .post("/api/articles/Mitch/comments")
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('Bad Request');
       });
     });
     
@@ -135,11 +136,11 @@ describe("app", () => {
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Bad Request");
       });
     });
 
-    test("400 POST: responds with an error message if the comment's author's username is not in users database", () => {
+    test("404 POST: responds with an error message if the comment's author's username is not in users database", () => {
       const requestBody = {
         'username': '123_zorro_man',
         'body': 'Not sure I got the point'
@@ -147,13 +148,13 @@ describe("app", () => {
       return request(app)
       .post("/api/articles/9/comments")
       .send(requestBody)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe('User is not registered');
+        expect(body.msg).toBe('User not found');
       });
     });
 
-    test("400 POST: responds with an error message if the article is not in articles database", () => {
+    test("404 POST: responds with an error message if the article is not in articles database", () => {
       const requestBody = {
         'username': 'butter_bridge',
         'body': 'Not sure I got the point'
