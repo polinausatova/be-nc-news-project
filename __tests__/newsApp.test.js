@@ -36,6 +36,18 @@ describe("app", () => {
 
   describe("/api/articles/:article_id/commens", () => {
 
+    test("200 GET: responds with an empty array given valid article_id for the article with no comments existing", () => {
+      return request(app)
+      .get('/api/articles/4/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('comments', expect.any(Array)); 
+
+        const { comments } = body;
+        expect(comments.length).toBe(0);
+      });
+    });
+
     test("200 GET: responds with an array of all comments for the given article_id, each of which should have 'comment_id', 'votes', 'created_at', 'author', 'body', 'article_id'  properties", () => {
       return request(app)
       .get("/api/articles/9/comments")
@@ -73,7 +85,7 @@ describe("app", () => {
       });
     });
 
-    test.only("400 GET: responds with 'Incorrect Request' message given invalid article_id", () => {
+    test("400 GET: responds with 'Incorrect Request' message given invalid article_id", () => {
       return request(app)
       .get("/api/articles/Mitch/comments")
       .expect(400)
@@ -82,21 +94,12 @@ describe("app", () => {
       });
     });
 
-    test("404 GET: responds with 'Article id does not exist' message given valid but non-existent article_id", () => {
+    test.only("404 GET: responds with 'Article id does not exist' message given valid but non-existent article_id", () => {
       return request(app)
       .get('/api/articles/28/comments')
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Article id does not exist");
-      });
-    });
-
-    test("404 GET: responds with 'There are no comments for this article yet' message given valid article_id for the article with no comments existing", () => {
-      return request(app)
-      .get('/api/articles/4/comments')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("There are no comments for this article yet");
       });
     });
 
