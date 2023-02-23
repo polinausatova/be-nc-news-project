@@ -129,12 +129,13 @@ describe("app", () => {
 
   describe.skip("PATCH /api/articles/:article_id", () => {
 
-    test("204 PATCH: No Content responds with '", () => {});
+    test("204 PATCH: No Content responds with", () => {
+      expect(0).toEqual(1);
+    });
 
     test("200 PATCH: request body accepts an object in the form { inc_votes: newVote }')", () => {
       const requestBody = {
-        'username': 'butter_bridge',
-        'body': 'Not sure I got the point'
+        inc_votes: newVote //?
       };
       return request(app)
       .post("/api/articles/9/comments")
@@ -154,7 +155,9 @@ describe("app", () => {
       });
     });
 
-    test("200 PATCH: responds with the corresponding article, updated so that 'votes' property changed accordingly to 'inc_votes' value in input object'", () => {});
+    test("200 PATCH: responds with the corresponding article, updated so that 'votes' property changed accordingly to 'inc_votes' value in input object'", () => {
+      expect(0).toEqual(1);
+    });
 
     test("400 PATCH: bad request responds with an error message if ", () => {
       const requestBody = [
@@ -169,9 +172,13 @@ describe("app", () => {
       });
     });
 
-    test("304 PATCH: Not Modified'", () => {});
+    test("304 PATCH: Not Modified'", () => {
+      expect(0).toEqual(1);
+    });
 
-    test("422 PATCH: Unprocessable Entity '", () => {});
+    test("422 PATCH: Unprocessable Entity '", () => {
+      expect(0).toEqual(1);
+    });
 
   });
 
