@@ -74,7 +74,58 @@ describe("app", () => {
         expect(body.msg).toBe('Article Not Found');
       });
     });
+  });
 
+  describe("/api/articles", () => {
+
+    test("200 GET: responds with an array of all article objects from corresponding database/table, each of which should have 'author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url' and 'comment_count' properties", () => {
+      return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        //console.log(body.articles);
+        expect(body).toHaveProperty('articles', expect.any(Array)); 
+        const { articles } = body;
+        expect(body.articles.length).toBe(12);
+
+        articles.forEach((article) => {
+          expect(article).toHaveProperty('author', expect.any(String));
+          expect(article).toHaveProperty('title', expect.any(String));
+          expect(article).toHaveProperty('article_id', expect.any(Number));
+          expect(article).toHaveProperty('topic', expect.any(String));
+          expect(article).toHaveProperty('created_at', expect.any(String));
+          expect(article).toHaveProperty('votes', expect.any(Number));
+          expect(article).toHaveProperty('article_img_url', expect.any(String));
+          expect(article).toHaveProperty('comment_count', expect.any(Number));
+        })
+      });
+    });
+  
+  
+    test("200 GET: 'comment_count' property should be the total count of all the comments with this article_id", () => {
+  
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body }) => {
+      const [ articleOne ] = body.articles.filter((article) => (article.article_id === 1));
+      expect(articleOne.comment_count).toBe(11); 
+    });
+    });
+
+    test("200 GET: the articles should be sorted by date in descending order", () => {
+    
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({ body }) => {
+      const { articles } = body;
+
+      for (let i=0; i<(articles.length-1); i++) {
+        expect(Date.parse(articles[i].created_at) - Date.parse(articles[i+1].created_at) >= 0).toBe(true);
+      }
+    });
+    });
   });
 
 
@@ -91,5 +142,3 @@ describe("app", () => {
   });
 
 });
-
-

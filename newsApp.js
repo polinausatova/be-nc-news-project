@@ -7,9 +7,11 @@ const {
 } = require('./newsControllers/errorHandlingControllers');
 
 
-const { getTopics, getArticleById} = require('./newsControllers/newsControllers')
+const { getTopics, getArticles, getArticleById} = require('./newsControllers/newsControllers')
 
 app.get('/api/topics', getTopics);
+
+app.get('/api/articles', getArticles);
 
 app.get('/api/articles/:article_id', getArticleById);
 
