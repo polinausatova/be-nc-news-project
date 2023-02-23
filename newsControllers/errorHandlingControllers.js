@@ -1,5 +1,4 @@
 exports.handlePSQL400s = (error, request, response, next) => {
-    console.log(error);
     if (error.code == '22P02') {
         response.status(400)
         .send({ msg: 'Incorrect Request' })
@@ -13,8 +12,11 @@ exports.handleCustomErrors = (error, request, response, next) => {
 
     if (error === 'Article Not Found') {
         response.status(404).send({ msg: error });
-
-    } else {
+    } 
+    else if (error === "Article id does not exist") {
+        response.status(404).send({ msg: error });
+    } 
+    else {
         next(error);
     }
 }
