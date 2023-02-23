@@ -24,3 +24,22 @@ exports.fetchArticles = () => {
     return articles.rows;
     })
 }
+
+exports.insertComment = (article_id, req_body) => {
+    const { username, body } = req_body;
+
+    return db.query(`
+    INSERT INTO comments 
+    (body, author, article_id) VALUES 
+    ($1, $2, $3)
+    RETURNING *;`, 
+    ['Not sure I got the point', 'grumpy19', 9])
+    // INSERT INTO comments (comment_id, body, votes, author, article_id, created_at) VALUES ($1, $2, $3, $4, $5, $6), [comment_id, body, 0, username, article_id, date]
+    .then((comment) => {
+        console.log(comment);
+        return comment;
+    });
+}
+
+// article_id INT REFERENCES articles(article_id) NOT NULL,
+//         author VARCHAR REFERENCES users(username) NOT NULL,

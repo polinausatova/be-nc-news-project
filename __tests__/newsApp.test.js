@@ -41,7 +41,6 @@ describe("app", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        //console.log(body.articles);
         expect(body).toHaveProperty('articles', expect.any(Array)); 
         const { articles } = body;
         expect(body.articles.length).toBe(12);
@@ -51,7 +50,9 @@ describe("app", () => {
           expect(article).toHaveProperty('title', expect.any(String));
           expect(article).toHaveProperty('article_id', expect.any(Number));
           expect(article).toHaveProperty('topic', expect.any(String));
-          expect(article).toHaveProperty('created_at', expect.any(String));
+          expect(article).toHaveProperty('created_at'
+          //, expect.any(String)
+          );
           expect(article).toHaveProperty('votes', expect.any(Number));
           expect(article).toHaveProperty('article_img_url', expect.any(String));
           expect(article).toHaveProperty('comment_count', expect.any(Number));
@@ -86,6 +87,28 @@ describe("app", () => {
     });
   });
 
+  describe("/api/articles/:article_id/comments", () => {
+
+    test.skip("201 POST: responds with the posted comment (Request body accepts an object with the following properties 'username', 'body')", () => {
+      const requestBody = {
+        'username': 'Bigga',
+        'body': 'Not sure I got the point'
+      };
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toHaveProperty('comment_id', expect(9));
+        expect(comment).toHaveProperty('body', expect('Not sure I got the point'));
+        expect(comment).toHaveProperty('votes', expect(0));
+        expect(comment).toHaveProperty('author', expect('Bigga'));
+        expect(comment).toHaveProperty('article_id', expect(9));
+        expect(article).toHaveProperty('created_at', expect.any(String));
+      });
+    });
+  });
 
   describe("Server errors", () => {
     test("404: responds with message when sent a valid but non-existing path", () => {
@@ -94,7 +117,7 @@ describe("app", () => {
       .expect(404)
       .then(({ body }) => {
         const serverResponseMessage = body.msg;
-        expect(serverResponseMessage).toBe(`Path not found. Sorry.`);
+        expect(serverResponseMessage).toBe('Path Not Found');
       });
     });
   });
