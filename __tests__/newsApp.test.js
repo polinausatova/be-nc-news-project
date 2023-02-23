@@ -127,6 +127,56 @@ describe("app", () => {
     });
   });
 
+  describe("PATCH /api/articles/:article_id", () => {
+
+    test("204 PATCH: No Content responds with '", () => {});
+
+    test("200 PATCH: request body accepts an object in the form { inc_votes: newVote }')", () => {
+      const requestBody = {
+        'username': 'butter_bridge',
+        'body': 'Not sure I got the point'
+      };
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        console.log(comment);
+        expect(comment).toEqual({
+          comment_id: 19,
+          body: 'Not sure I got the point',
+          article_id: 9,
+          author: 'butter_bridge',
+          votes: 0,
+          created_at: expect.any(String)
+        });
+      });
+    });
+
+    test("200 PATCH: responds with the corresponding article, updated so that 'votes' property changed accordingly to 'inc_votes' value in input object'", () => {});
+
+    test("400 PATCH: bad request responds with an error message if ", () => {
+      const requestBody = [
+        'Bigga', 'Not sure I got the point'
+      ];
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Invalid input');
+      });
+    });
+
+    test("304 PATCH: Not Modified'", () => {});
+
+    test("422 PATCH: Unprocessable Entity '", () => {});
+
+  });
+
+  
+
   describe("Server errors", () => {
     test("404: responds with message when sent a valid but non-existing path", () => {
       return request(app)
