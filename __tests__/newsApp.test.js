@@ -112,7 +112,7 @@ describe("app", () => {
       });
     });
 
-    test.skip("400 POST: responds with an error message if input is not an object", () => {
+    test("400 POST: responds with an error message if input is not an object", () => {
       const requestBody = [
         'Bigga', 'Not sure I got the point'
       ];
@@ -121,11 +121,11 @@ describe("app", () => {
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input datatype');
+        expect(body.msg).toBe('Invalid input');
       });
     });
     
-    test.skip("400 POST: responds with an error message if input does not have any of required properties ('username','body')", () => {
+    test("400 POST: responds with an error message if input does not have any of required properties ('username','body')", () => {
       const requestBody = {
         'nickname': 'Bigga',
         'text': 'Not sure I got the point'
@@ -135,9 +135,38 @@ describe("app", () => {
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Missing properties('username' and/or 'body')");
+        expect(body.msg).toBe("Invalid input");
       });
     });
+
+    test("400 POST: responds with an error message if the comment's author's username is not in users database", () => {
+      const requestBody = {
+        'username': '123_zorro_man',
+        'body': 'Not sure I got the point'
+      };;
+      return request(app)
+      .post("/api/articles/9/comments")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('User is not registered');
+      });
+    });
+
+    test("400 POST: responds with an error message if the article is not in articles database", () => {
+      const requestBody = {
+        'username': 'butter_bridge',
+        'body': 'Not sure I got the point'
+      };;
+      return request(app)
+      .post("/api/articles/33/comments")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article Not Found');
+      });
+    });
+
   });
 
   describe("Server errors", () => {

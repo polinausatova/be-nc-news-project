@@ -27,16 +27,20 @@ exports.fetchArticles = () => {
 
 exports.insertComment = (article_id, req_body) => {
     const { username, body } = req_body;
-
-    return db.query(`
-    INSERT INTO comments 
-    (body, author, article_id) VALUES 
-    ($1, $2, $3)
-    RETURNING *;`, 
-    [body, username, article_id])
-   
-    .then((comment) => {
-        return comment.rows[0];
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]).then((articles) => {
+        if (articles.rows.length === 0) {
+            return Promise.reject("Article Not Found");
+        } else 
+        {
+            return db.query(`
+            INSERT INTO comments 
+            (body, author, article_id) VALUES 
+            ($1, $2, $3)
+            RETURNING *;`, 
+            [body, username, article_id])
+            .then((comment) => {
+                return comment.rows[0];
+            });
+        }
     });
 }
-
