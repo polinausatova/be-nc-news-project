@@ -4,10 +4,7 @@ const db = require("../db/connection.js");
 exports.fetchTopics = () => {
     return db.query(`SELECT * FROM topics`).then((topics) => {
        
-        const formattedTopics = topics.rows.map(({ slug, description }) => {
-            return { 'slug': slug, 'description': description};
-        });
-        return formattedTopics;
+        return topics.rows;
     });
 }
 
@@ -99,10 +96,7 @@ exports.changeVotes = (id, votes) => {
 
 exports.fetchUsers = () => {
     return db.query(`SELECT * FROM users`).then((users) => {
-       
-        // const formattedTopics = topics.rows.map(({ slug, description }) => {
-        //     return { 'slug': slug, 'description': description};
-        // });
+      
         return users.rows;
     });
 }
