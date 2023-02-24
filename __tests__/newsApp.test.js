@@ -44,15 +44,14 @@ describe("app", () => {
       .then(({ body }) => {
         expect(body).toHaveProperty('articles', expect.any(Array)); 
         const { articles } = body;
-        expect(body.articles.length).toBe(12);
+        expect(articles.length).toBe(12);
 
         articles.forEach((article) => {
           expect(article).toHaveProperty('author', expect.any(String));
           expect(article).toHaveProperty('title', expect.any(String));
           expect(article).toHaveProperty('article_id', expect.any(Number));
           expect(article).toHaveProperty('topic', expect.any(String));
-          expect(article).toHaveProperty('created_at'
-          //, expect.any(String)
+          expect(article).toHaveProperty('created_at', expect.any(String)
           );
           expect(article).toHaveProperty('votes', expect.any(Number));
           expect(article).toHaveProperty('article_img_url', expect.any(String));
@@ -85,6 +84,59 @@ describe("app", () => {
       }
     });
     });
+
+
+    test("200 GET: accepts the query 'topic', which filters the articles by the topic value", () => {
+      return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('articles', expect.any(Array)); 
+        const { articles } = body;
+        expect(articles.length).toBe(1);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty('author', expect.any(String));
+          expect(article).toHaveProperty('title', expect.any(String));
+          expect(article).toHaveProperty('article_id', expect.any(Number));
+          expect(article).toHaveProperty('topic', expect(cats));
+          expect(article).toHaveProperty('created_at', expect.any(String)
+          );
+          expect(article).toHaveProperty('votes', expect.any(Number));
+          expect(article).toHaveProperty('article_img_url', expect.any(String));
+          expect(article).toHaveProperty('comment_count', expect.any(Number));
+        })
+      });
+    });
+
+    test("200 GET: accepts the query 'sort_by', which sorts the articles by any valid column", () => {
+      return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+  
+        for (let i=0; i<(articles.length-1); i++) {
+          expect(articles[i].comment_count - articles[i+1].comment_count >= 0).toBe(true);
+        }
+      });
+    });
+
+    test("200 GET: accepts the query 'order', which can be set to asc (default for descending)", () => {
+    
+      return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+  
+        for (let i=0; i<(articles.length-1); i++) {
+          expect(articles[i].article_id - articles[i+1].article_id <= 0).toBe(true);
+        }
+      });
+    });
+
+    //400,404 - invalid queries
+
   });
 
   describe("GET: /api/articles/:article_id", () => {
@@ -128,7 +180,6 @@ describe("app", () => {
       });
     });
   });
-
 
   describe("GET: /api/articles/:article_id/comments", () => {
 
