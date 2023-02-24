@@ -1,4 +1,10 @@
-const {fetchTopics, fetchArticles, fetchArticleById, fetchComments} = require('../newsModels/newsModels')
+const { 
+    fetchTopics, 
+    fetchArticles, 
+    fetchArticleById, 
+    fetchComments, 
+    insertComment 
+} = require('../newsModels/newsModels')
 
 exports.getTopics = (req, res, next) => {
   
@@ -43,4 +49,16 @@ exports.getComments = (req, res, next) => {
         .catch((err) => {
             next(err);
         });
+}
+
+exports.postComment = (req, res, next) => {
+    const { body } = req;
+    const { article_id } = req.params;
+    insertComment(article_id, body)
+    .then ((comment) => {
+        res.status(201).send({ comment })
+    })
+    .catch((err) => {
+        next(err);
+    });
 }
