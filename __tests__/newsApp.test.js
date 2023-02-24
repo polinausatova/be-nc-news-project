@@ -354,6 +354,26 @@ describe("app", () => {
     });
   });
 
+  describe("GET: /api/users", () => {
+
+    test("200 GET: responds with an array of all users objects from corresponding database/table, each of which should have 'username', 'name' and 'avatar_url' properties", () => {
+      return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        
+        expect(body).toHaveProperty('users', expect.any(Array)); 
+        const {users} = body;
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toHaveProperty('username', expect.any(String));
+          expect(user).toHaveProperty('name', expect.any(String));
+          expect(user).toHaveProperty('avatar_url', expect.any(String));
+        })
+      });
+    });
+  });
+
   describe("Server errors", () => {
     test("404: responds with message when sent a valid but non-existing path", () => {
       return request(app)

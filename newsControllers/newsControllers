@@ -4,7 +4,8 @@ const {
     fetchArticleById, 
     fetchComments, 
     insertComment,
-    changeVotes
+    changeVotes,
+    fetchUsers
 } = require('../newsModels/newsModels')
 
 exports.getTopics = (req, res, next) => {
@@ -70,6 +71,17 @@ exports.patchArticleById = (req, res, next) => {
     changeVotes(article_id, inc_votes)
     .then ((article) => {
         res.status(200).send({ article })
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
+exports.getUsers = (req, res, next) => {
+  
+    fetchUsers()
+    .then ((users) => {
+        res.status(200).send({ users })
     })
     .catch((err) => {
         next(err);
