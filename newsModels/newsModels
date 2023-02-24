@@ -1,10 +1,8 @@
 
 const db = require("../db/connection.js");
-const { commentsCount } = require("../newsUtilities/newsUtilities.js");
-
 
 exports.fetchTopics = () => {
-    return db.query("SELECT * FROM topics").then((topics) => {
+    return db.query(`SELECT * FROM topics`).then((topics) => {
        
         const formattedTopics = topics.rows.map(({ slug, description }) => {
             return { 'slug': slug, 'description': description};
@@ -23,6 +21,41 @@ exports.fetchArticles = () => {
     `).then((articles) => {
     return articles.rows;
     })
+}
+
+exports.fetchArticleById = (id) => {
+
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]).then((articles) => {
+        if (articles.rows.length === 0) {
+            return Promise.reject("Article Not Found");
+        }
+        return articles.rows[0];
+    });
+};
+
+exports.fetchComments = (article_id) => {
+    if (typeof article_id*1 === NaN) {
+        return next();
+    } 
+    else 
+    return db.query(`
+    SELECT * FROM comments 
+    WHERE comments.article_id = $1 
+    ORDER BY comments.created_at DESC;
+    `, [article_id]).then((comments) => {
+        if (comments.rows.length === 0) {
+            return db.query(`
+            SELECT * FROM articles
+            WHERE articles.article_id = $1
+            `, [article_id]).then((articles) => {
+                if (articles.rows.length === 0) {
+                    return Promise.reject("Article id does not exist");
+                }
+                return [];
+            })
+        } 
+        return comments.rows;
+    });
 }
 
 exports.insertComment = (article_id, req_body) => {

@@ -14,7 +14,7 @@ afterAll(() => {
 
 describe("app", () => {
 
-  describe("/api/topics", () => {
+  describe("GET: /api/topics", () => {
 
     test("200 GET: responds with an array of all topic objects from corresponding database/table, each of which should have 'slug' and 'description' properties", () => {
       return request(app)
@@ -34,7 +34,8 @@ describe("app", () => {
     });
   });
 
-  describe("/api/articles", () => {
+
+  describe("GET: /api/articles", () => {
 
     test("200 GET: responds with an array of all article objects from corresponding database/table, each of which should have 'author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url' and 'comment_count' properties", () => {
       return request(app)
@@ -59,7 +60,6 @@ describe("app", () => {
         })
       });
     });
-  
   
     test("200 GET: 'comment_count' property should be the total count of all the comments with this article_id", () => {
   
@@ -87,7 +87,119 @@ describe("app", () => {
     });
   });
 
-  describe("/api/articles/:article_id/comments", () => {
+  describe("GET: /api/articles/:article_id", () => {
+
+    test("200 GET: responds with an article object that should have 'author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'article_img_url' properties", () => {
+
+      return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('article', expect.any(Object)); 
+
+        const { article } = body;
+
+        expect(article).toHaveProperty('author', expect.any(String));
+        expect(article).toHaveProperty('title', expect.any(String));
+        expect(article).toHaveProperty('article_id', expect.any(Number));
+        expect(article).toHaveProperty('topic', expect.any(String));
+        expect(article).toHaveProperty('created_at', expect.any(String));
+        expect(article).toHaveProperty('votes', expect.any(Number));
+        expect(article).toHaveProperty('article_img_url', expect.any(String));
+        expect(article).toHaveProperty('body', expect.any(String));
+      })
+    })
+
+    test("400 GET: responds with incorrect request given invalid article_id", () => {
+      return request(app)
+      .get('/api/articles/Mitch')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+    });
+
+    test("404 GET: responds with 'Not found' message given valid but non-existent article_id", () => {
+      return request(app)
+      .get('/api/articles/20008')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article Not Found');
+      });
+    });
+  });
+
+  describe("GET: /api/articles/:article_id/comments", () => {
+
+    test("200 GET: responds with an empty array given valid article_id for the article with no comments existing", () => {
+      return request(app)
+      .get('/api/articles/4/comments')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('comments', expect.any(Array)); 
+
+        const { comments } = body;
+        expect(comments.length).toBe(0);
+      });
+    });
+
+    test("200 GET: responds with an array of all comments for the given article_id, each of which should have 'comment_id', 'votes', 'created_at', 'author', 'body', 'article_id'  properties", () => {
+      return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+
+        expect(body).toHaveProperty('comments', expect.any(Array)); 
+
+        const { comments } = body;
+        expect(comments.length).toBe(2);
+
+        comments.forEach((comment) => {
+        expect(comment).toHaveProperty('comment_id', expect.any(Number));
+        expect(comment).toHaveProperty('votes', expect.any(Number));
+        expect(comment).toHaveProperty('created_at', expect.any(String));
+        expect(comment).toHaveProperty('author', expect.any(String));
+        expect(comment).toHaveProperty('body', expect.any(String));
+        expect(comment).toHaveProperty('article_id');
+        expect(comment.article_id).toBe(9);
+        })
+      })
+    });
+    
+    test("200 GET: comments should be served with the most recent comments first", () => {
+
+      return request(app)
+      .get("/api/articles/9/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).not.toBe(undefined); //add to similiar test to avoid false passing!
+        for (let i=0; i<(comments.length-1); i++) {
+          expect(Date.parse(comments[i].created_at) - Date.parse(comments[i+1].created_at) >= 0).toBe(true);
+        }
+      });
+    });
+
+    test("400 GET: responds with 'Incorrect Request' message given invalid article_id", () => {
+      return request(app)
+      .get("/api/articles/Mitch/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
+    });
+
+    test.skip("404 GET: responds with 'Article Not Found' message given valid but non-existent article_id", () => {
+      return request(app)
+      .get('/api/articles/28/comments')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article Not Found");
+      });
+    });
+  });
+
+  describe("POST: /api/articles/:article_id/comments", () => {
 
     test("201 POST: responds with the posted comment (Request body accepts an object with the following properties 'username', 'body')", () => {
       const requestBody = {
@@ -177,11 +289,10 @@ describe("app", () => {
       .expect(404)
       .then(({ body }) => {
         const serverResponseMessage = body.msg;
-        expect(serverResponseMessage).toBe('Path Not Found');
+
+        expect(serverResponseMessage).toBe("Path Not Found");
       });
     });
   });
 
 });
-
-
