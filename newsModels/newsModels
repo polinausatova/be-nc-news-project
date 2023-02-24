@@ -96,3 +96,13 @@ exports.changeVotes = (id, votes) => {
         }
     });
 };
+
+exports.fetchUsers = () => {
+    return db.query(`SELECT * FROM users`).then((users) => {
+       
+        // const formattedTopics = topics.rows.map(({ slug, description }) => {
+        //     return { 'slug': slug, 'description': description};
+        // });
+        return users.rows;
+    });
+}
