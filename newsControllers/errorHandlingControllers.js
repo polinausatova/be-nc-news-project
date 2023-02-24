@@ -1,4 +1,3 @@
-
 exports.handle400s = (error, request, response, next) => {
     
     if (error.code === '22P02' || error.code == '23502') {

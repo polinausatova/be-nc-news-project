@@ -77,3 +77,22 @@ exports.insertComment = (article_id, req_body) => {
         }
     });
 }
+
+exports.changeVotes = (id, votes) => {
+
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]).then((articles) => {
+        if (articles.rows.length === 0) {
+            return Promise.reject("Article Not Found");
+        } else {
+            return db.query(`
+            UPDATE articles
+            SET votes = votes + $1
+            WHERE article_id = $2
+            RETURNING *;`
+            , [ votes, id ])
+            .then((articles) => {
+                return articles.rows[0];
+            })
+        }
+    });
+};
