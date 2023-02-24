@@ -33,6 +33,51 @@ exports.fetchArticleById = (id) => {
     });
 };
 
+exports.fetchComments = (article_id) => {
+    if (typeof article_id*1 === NaN) {
+        return next();
+    } 
+    else 
+    return db.query(`
+    SELECT * FROM comments 
+    WHERE comments.article_id = $1 
+    ORDER BY comments.created_at DESC;
+    `, [article_id]).then((comments) => {
+        if (comments.rows.length === 0) {
+            return db.query(`
+            SELECT * FROM articles
+            WHERE articles.article_id = $1
+            `, [article_id]).then((articles) => {
+                if (articles.rows.length === 0) {
+                    return Promise.reject("Article Not Found");
+                }
+                return [];
+            })
+        } 
+        return comments.rows;
+    });
+}
+
+exports.insertComment = (article_id, req_body) => {
+    const { username, body } = req_body;
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]).then((articles) => {
+        if (articles.rows.length === 0) {
+            return Promise.reject("Article Not Found");
+        } else 
+        {
+            return db.query(`
+            INSERT INTO comments 
+            (body, author, article_id) VALUES 
+            ($1, $2, $3)
+            RETURNING *;`, 
+            [body, username, article_id])
+            .then((comment) => {
+                return comment.rows[0];
+            });
+        }
+    });
+}
+
 exports.changeVotes = (id, votes) => {
 
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]).then((articles) => {
@@ -46,7 +91,6 @@ exports.changeVotes = (id, votes) => {
             RETURNING *;`
             , [ votes, id ])
             .then((articles) => {
-                console.log (articles);
                 return articles.rows[0];
             })
         }

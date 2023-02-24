@@ -1,5 +1,11 @@
-const {fetchTopics, fetchArticles, fetchArticleById, changeVotes} = require('../newsModels/newsModels')
-
+const { 
+    fetchTopics, 
+    fetchArticles, 
+    fetchArticleById, 
+    fetchComments, 
+    insertComment,
+    changeVotes
+} = require('../newsModels/newsModels')
 
 exports.getTopics = (req, res, next) => {
   
@@ -33,6 +39,29 @@ exports.getArticleById = (req, res, next) => {
         next(err);
     });
 }
+exports.getComments = (req, res, next) => {
+    const { article_id } = req.params;
+    
+    fetchComments(article_id)
+    .then ((comments) => {
+        res.status(200).send({ comments })
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
+
+exports.postComment = (req, res, next) => {
+    const { body } = req;
+    const { article_id } = req.params;
+    insertComment(article_id, body)
+    .then ((comment) => {
+        res.status(201).send({ comment })
+    })
+    .catch((err) => {
+        next(err);
+    });
+}
 
 exports.patchArticleById = (req, res, next) => {
     const { article_id } = req.params;
@@ -46,5 +75,3 @@ exports.patchArticleById = (req, res, next) => {
         next(err);
     });
 }
-
-
