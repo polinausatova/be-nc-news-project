@@ -189,7 +189,7 @@ describe("app", () => {
       });
     });
 
-    test.skip("404 GET: responds with 'Article Not Found' message given valid but non-existent article_id", () => {
+    test("404 GET: responds with 'Article Not Found' message given valid but non-existent article_id", () => {
       return request(app)
       .get('/api/articles/28/comments')
       .expect(404)

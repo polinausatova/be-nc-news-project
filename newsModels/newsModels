@@ -49,7 +49,7 @@ exports.fetchComments = (article_id) => {
             WHERE articles.article_id = $1
             `, [article_id]).then((articles) => {
                 if (articles.rows.length === 0) {
-                    return Promise.reject("Article id does not exist");
+                    return Promise.reject("Article Not Found");
                 }
                 return [];
             })
