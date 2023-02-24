@@ -113,7 +113,7 @@ describe("app", () => {
       .get('/api/articles/Mitch')
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Incorrect Request');
+        expect(body.msg).toBe("Bad Request");
       });
     });
 
@@ -127,62 +127,77 @@ describe("app", () => {
     });
   });
 
-  describe.skip("PATCH /api/articles/:article_id", () => {
+  describe("PATCH /api/articles/:article_id", () => {
 
-    test("204 PATCH: No Content responds with", () => {
-      expect(0).toEqual(1);
-    });
-
-    test("200 PATCH: request body accepts an object in the form { inc_votes: newVote }')", () => {
-      const requestBody = {
-        inc_votes: newVote //?
-      };
+    test("400 PATCH: responds with an error message if missing required keys - empty input", () => {
+      const requestBody = {};
       return request(app)
-      .post("/api/articles/9/comments")
-      .send(requestBody)
-      .expect(201)
-      .then(({ body }) => {
-        const { comment } = body;
-        console.log(comment);
-        expect(comment).toEqual({
-          comment_id: 19,
-          body: 'Not sure I got the point',
-          article_id: 9,
-          author: 'butter_bridge',
-          votes: 0,
-          created_at: expect.any(String)
-        });
-      });
-    });
-
-    test("200 PATCH: responds with the corresponding article, updated so that 'votes' property changed accordingly to 'inc_votes' value in input object'", () => {
-      expect(0).toEqual(1);
-    });
-
-    test("400 PATCH: bad request responds with an error message if ", () => {
-      const requestBody = [
-        'Bigga', 'Not sure I got the point'
-      ];
-      return request(app)
-      .post("/api/articles/9/comments")
+      .patch("/api/articles/1")
       .send(requestBody)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe('Invalid input');
+        expect(body.msg).toBe('Bad Request');
       });
     });
 
-    test("304 PATCH: Not Modified'", () => {
-      expect(0).toEqual(1);
+    test("400 PATCH:responds with an error message if missing required keys - wrong keys in the input", () => {
+      const requestBody = {'Mitch': 7};
+      return request(app)
+      .patch("/api/articles/1")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Bad Request');
+      });
     });
 
-    test("422 PATCH: Unprocessable Entity '", () => {
-      expect(0).toEqual(1);
+    test("400 PATCH: bad request responds with an error message if id is NaN", () => {
+      const requestBody = {
+        inc_votes: 3 
+      };
+      return request(app)
+      .patch("/api/articles/Mitch")
+      .send(requestBody)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
     });
 
-  });
-
+    test("404 PATCH: responds with an error message if article id is valid but not exists", () => {
+      const requestBody = {
+        inc_votes: 3 
+      };
+      return request(app)
+      .patch("/api/articles/28")
+      .send(requestBody)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article Not Found");
+      });
+    });
   
+
+    test("200 PATCH: responds with the corresponding article, updated so that 'votes' property changed accordingly to 'inc_votes' value in input object'", () => {
+      const requestBody = {
+        inc_votes: 3 
+      };
+      return request(app)
+      .patch("/api/articles/1")
+      .send(requestBody)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual({
+          "article_id": 1, 
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700", 
+          "author": "butter_bridge", 
+          "body": "I find this existence challenging", "created_at": "2020-07-09T20:11:00.000Z", 
+          "title": "Living in the shadow of a great man", "topic": "mitch", 
+          "votes": 103});
+      });
+    });
+  });
 
   describe("Server errors", () => {
     test("404: responds with message when sent a valid but non-existing path", () => {
