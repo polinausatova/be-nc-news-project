@@ -174,6 +174,20 @@ describe("app", () => {
       })
     })
 
+    test("200 GET: article object should have 'comment_count' property with the number of all comments from 'comments' table", () => {
+
+      return request(app)
+      .get("/api/articles/9")
+      .expect(200)
+      .then(({ body }) => {
+         
+        const { article } = body;
+
+        expect(article).toHaveProperty('comment_count', expect.any(Number));
+        expect(article.comment_count).toBe(2);
+      })
+    })
+
     test("400 GET: responds with incorrect request given invalid article_id", () => {
       return request(app)
       .get('/api/articles/Mitch')
