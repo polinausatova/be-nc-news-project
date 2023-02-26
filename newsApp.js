@@ -21,12 +21,6 @@ app.use(express.json());
 app.get('/api/topics', getTopics);
 
 app.get('/api/articles', getArticles);
-//10. GET /api/articles (queries)
-//FEATURE REQUEST
-// The end point should also accept the following queries:
-// topic, which filters the articles by the topic value specified in the query. If the query is omitted the endpoint should respond with all articles.
-// sort_by, which sorts the articles by any valid column (defaults to date)
-// order, which can be set to asc or desc for ascending or descending (defaults to descending)
 
 app.get('/api/articles/:article_id', getArticleById);
 

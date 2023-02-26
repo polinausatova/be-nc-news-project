@@ -1,6 +1,6 @@
 exports.handle400s = (error, request, response, next) => {
     
-    if (error.code === '22P02' || error.code == '23502') {
+    if (error.code === '22P02' || error.code == '23502' || error.code == '42601') {
         response.status(400)
         .send({ msg: 'Bad Request' })
     } else {
