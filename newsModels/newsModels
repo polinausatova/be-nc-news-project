@@ -55,7 +55,11 @@ exports.fetchArticles = (topicQuery, sort_byQuery, orderQuery) => {
 
 exports.fetchArticleById = (id) => {
 
-    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]).then((articles) => {
+    return db.query(`
+    SELECT articles.*, CAST(COUNT (comments.author) AS INT) AS comment_count
+    FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`, [id]).then((articles) => {
         if (articles.rows.length === 0) {
             return Promise.reject("Article Not Found");
         }
