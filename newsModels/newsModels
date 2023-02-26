@@ -8,17 +8,57 @@ exports.fetchTopics = () => {
     });
 }
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (topicQuery, sort_byQuery, orderQuery) => {
 
-    // let queryString 
-    return db.query(`
+    console.log(topicQuery, sort_byQuery, orderQuery);
+
+    let queryString = `
     SELECT articles.*, CAST(COUNT (comments.author) AS INT) AS comment_count
     FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC;
-    `).then((articles) => {
-    return articles.rows;
-    })
+    `;
+
+    if (topicQuery !== undefined) {
+        queryString += `WHERE topic = $1 `;
+    }
+
+    queryString += `GROUP BY articles.article_id `;
+
+    if (sort_byQuery !== undefined) {
+     
+        if (orderQuery === `asc`) queryString += `ORDER BY `+sort_byQuery+` ASC`;
+        else queryString += `ORDER BY `+sort_byQuery+` DESC`;
+        
+    } else queryString += `ORDER BY articles.created_at DESC`;
+    queryString += `;`;
+    console.log(queryString);
+
+    if (topicQuery !== undefined) {
+        return db.query(queryString, [topicQuery])
+        .then((articles) => {
+            console.log(articles.rows.length);
+            return(articles.rows);
+        });
+    }
+    else {
+        return db.query(queryString)
+        .then((articles) => {
+            console.log(articles.rows.length);
+            return(articles.rows);
+        });  
+    }
+
+//?topic=
+//?sort_by=
+//api/articles?order=
+
+    // return db.query(`
+    // SELECT articles.*, CAST(COUNT (comments.author) AS INT) AS comment_count
+    // FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id
+    // GROUP BY articles.article_id
+    // ORDER BY articles.created_at DESC;
+    // `).then((articles) => {
+    // return articles.rows;
+    // })
 }
 
 // The end point should also accept the following queries:

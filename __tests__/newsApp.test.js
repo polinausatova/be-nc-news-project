@@ -45,7 +45,7 @@ describe("app", () => {
         expect(body).toHaveProperty('articles', expect.any(Array)); 
         const { articles } = body;
         expect(articles.length).toBe(12);
-
+        console.log('1 - /api/articles')
         articles.forEach((article) => {
           expect(article).toHaveProperty('author', expect.any(String));
           expect(article).toHaveProperty('title', expect.any(String));
@@ -66,6 +66,7 @@ describe("app", () => {
     .get("/api/articles")
     .expect(200)
     .then(({ body }) => {
+      console.log('2 - /api/articles')
       const [ articleOne ] = body.articles.filter((article) => (article.article_id === 1));
       expect(articleOne.comment_count).toBe(11); 
     });
@@ -78,27 +79,28 @@ describe("app", () => {
     .expect(200)
     .then(({ body }) => {
       const { articles } = body;
-
+      console.log('3 - /api/articles')
       for (let i=0; i<(articles.length-1); i++) {
         expect(Date.parse(articles[i].created_at) - Date.parse(articles[i+1].created_at) >= 0).toBe(true);
       }
     });
     });
 
-
     test("200 GET: accepts the query 'topic', which filters the articles by the topic value", () => {
       return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
+        console.log('4 - /api/articles?topic=cats')
         expect(body).toHaveProperty('articles', expect.any(Array)); 
         const { articles } = body;
         expect(articles.length).toBe(1);
         articles.forEach((article) => {
+          expect(article).toHaveProperty('topic');
+          expect(article.topic).toBe("cats");
           expect(article).toHaveProperty('author', expect.any(String));
           expect(article).toHaveProperty('title', expect.any(String));
           expect(article).toHaveProperty('article_id', expect.any(Number));
-          expect(article).toHaveProperty('topic', expect(cats));
           expect(article).toHaveProperty('created_at', expect.any(String)
           );
           expect(article).toHaveProperty('votes', expect.any(Number));
@@ -114,7 +116,7 @@ describe("app", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-  
+        console.log('5 - /api/articles?sort_by=comment_count')
         for (let i=0; i<(articles.length-1); i++) {
           expect(articles[i].comment_count - articles[i+1].comment_count >= 0).toBe(true);
         }
@@ -128,14 +130,58 @@ describe("app", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-  
+        console.log('6 - /api/articles?sort_by=article_id&order=asc')
         for (let i=0; i<(articles.length-1); i++) {
           expect(articles[i].article_id - articles[i+1].article_id <= 0).toBe(true);
         }
       });
     });
 
-    //400,404 - invalid queries
+    test.skip("404 GET: responds with 'Not found' message given valid but non-existent topic query", () => {
+      return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article Not Found');
+      });
+    });
+  
+    test.skip("404 GET: responds with 'Not found' message given valid but non-existent column query", () => {
+      return request(app)
+      .get("/api/articles?sort_by=text_length")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('Article Not Found');
+      });
+    });
+   
+    
+    test.skip("400 GET: responds with incorrect request given invalid topic query", () => {
+      return request(app)
+      .get("/api/articles?topic=1)3")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+    });
+
+    test.skip("400 GET: responds with incorrect request given invalid column query", () => {
+      return request(app)
+      .get("/api/articles?sort_by=123*")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+    });
+
+    test.skip("400 GET: responds with incorrect request given invalid order query ", () => {
+      return request(app)
+      .get("/api/articles?sort_by=article_id&order=foo")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+    });
 
   });
 
