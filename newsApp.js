@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const {
+//check error code for single quotation marks in json and add relevant erron handling
 handle400s,
 handle404s
 } = require('./newsControllers/errorHandlingControllers');
