@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 const {
-//check error code for single quotation marks in json and add relevant erron handling
+//check error code for single quotation marks in json and add relevant error handling
 handle400s,
 handle404s
 } = require('./newsControllers/errorHandlingControllers');
@@ -16,6 +17,8 @@ const {
     patchArticleById,
     getUsers
 } = require('./newsControllers/newsControllers')
+
+app.use(cors());
 
 app.use(express.json());
 
